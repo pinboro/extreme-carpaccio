@@ -1,0 +1,30 @@
+# .gitpod.yml
+image: gitpod/workspace-full
+
+tasks:
+  - name: Setup & Start Client
+    init: |
+      npm install
+      npm install -g ngrok
+    command: |
+      echo "Environment ready for Extreme Carpaccio!"
+
+  - name: Start Tunnel
+    command: |
+      ngrok http 8080 > ngrok.log 2>&1 &
+      sleep 5
+      echo "Waiting for ngrok..."
+      NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+      echo "===================================="
+      echo "Your service URL is: $NGROK_URL"
+      echo "===================================="
+
+ports:
+  - port: 8080
+    onOpen: ignore
+  - port: 4040
+    onOpen: ignore
+
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
